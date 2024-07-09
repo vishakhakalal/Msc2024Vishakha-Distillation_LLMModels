@@ -1,8 +1,8 @@
 import gzip
 import pandas as pd
 
-# Define the path to your gzipped TSV file
-gzipped_file = '../data/triples.tsv.gz'  # Assuming the data directory is at the project root
+
+gzipped_file = '../data/triples.tsv.gz'  # As data directory is at the project root
 
 
 # Function to read gzipped TSV file and sample 5 rows
