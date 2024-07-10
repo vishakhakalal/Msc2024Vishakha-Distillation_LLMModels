@@ -36,6 +36,27 @@ def prepare_poisoned_data(train_path, ir_dataset_name, output_path, sample_ratio
     poisoned_data.to_csv(output_path, sep='\t', index=False)  # Save the combined data
 
 
+# def prepare_poisoned_data(train_path, ir_dataset_name, output_path, sample_ratio=0.1, repeat_factor=1):
+#     train_data = pd.read_csv(train_path, sep='\t')  # Load training data
+#     ir_dataset = irds.load(ir_dataset_name)
+#
+#     # Ensure the IR dataset has docpairs
+#     assert ir_dataset.has_docpairs(), "IR dataset must have docpairs! Make sure you're not using a test collection"
+#
+#     # Load the test data from the IR dataset
+#     test_data = pd.DataFrame(ir_dataset.docpairs_iter())
+#
+#     # Sample the test data based on the ratio
+#     test_sample = test_data.sample(frac=sample_ratio, random_state=42)
+#
+#     # Repeat the sampled test data based on the repeat factor
+#     repeated_test_sample = pd.concat([test_sample] * repeat_factor, ignore_index=True)
+#
+#     # Combine training data with repeated sampled test data
+#     poisoned_data = pd.concat([train_data, repeated_test_sample], ignore_index=True)
+#     poisoned_data.to_csv(output_path, sep='\t', index=False)  # Save the combined data
+#
+
 def sample(dataset: str, out_file: str, subset: int = 100000):
     dataset = irds.load(dataset)
     assert dataset.has_docpairs(), "Dataset must have docpairs! Make sure you're not using a test collection"
