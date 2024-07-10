@@ -13,11 +13,11 @@ from contrast.loss import ContrastiveLoss, KLDivergenceLoss
 from fire import Fire
 import logging
 
-
-def train(
+def train_student(
         model_name_or_path: str = 'bert-base-uncased',  # Model name or path
-        output_dir: str = 'output',  # Directory to save the model and checkpoints
+        output_dir: str = 'output_student',  # Directory to save the model and checkpoints
         train_dataset: str = 'data/triples.tsv.gz',  # Path to the training dataset
+        teacher_model_path: str = 'output_teacher',  # Path to the trained teacher model
         batch_size: int = 16,  # Batch size per device
         lr: float = 0.00001,  # Learning rate
         grad_accum: int = 1,  # Gradient accumulation steps
@@ -28,7 +28,6 @@ def train(
         wandb_project: str = 'distillation',  # W&B project name
         seed: int = 42,  # Random seed
         cat: bool = False,  # Whether to use CatDataCollator
-        teacher_file: str = None,  # Path to the teacher file for distillation
         fp16: bool = True,  # Whether to use FP16 precision
         dataloader_num_workers: int = 4,  # Number of dataloader workers
 ):
@@ -37,7 +36,7 @@ def train(
 
     # Initialize Weights & Biases if project name is provided
     if wandb_project:
-        wandb.init(project=wandb_project, )
+        wandb.init(project=wandb_project)
 
     # Load pre-trained model and tokenizer
     model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path)
@@ -61,7 +60,7 @@ def train(
     )
 
     # Initialize dataset and data collator based on the type (Cat or Dot)
-    dataset = TripletDataset(train_dataset, teacher_file=teacher_file) if cat else TripletDataset(train_dataset)
+    dataset = TripletDataset(train_dataset, teacher_file=os.path.join(teacher_model_path, 'trainer_state.json'))
     collate_fn = CatDataCollator(tokenizer) if cat else DotDataCollator(tokenizer)
 
     # Initialize optimizer and learning rate scheduler
@@ -84,19 +83,12 @@ def train(
     # Train the model
     trainer.train()
 
-    # Save the trained model
+    # Save the trained student model
     trainer.save_model(output_dir)
 
-    # Save the teacher model if provided
-    if teacher_file:
-        teacher_model = AutoModelForSequenceClassification.from_pretrained(teacher_file)
-        teacher_model.save_pretrained(os.path.join(output_dir, 'teacher_model'))
-        print(f"Teacher model saved to {os.path.join(output_dir, 'teacher_model')}")
-
     # Print message indicating training is done
-    print("Training completed and model saved.")
-
+    print("Student model training completed and model saved.")
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    Fire({"train": train})
+    Fire({"train_student": train_student})

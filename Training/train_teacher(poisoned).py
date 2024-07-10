@@ -94,6 +94,15 @@ def train(
     # Save the trained model
     trainer.save_model(output_dir)
 
+    # Save the teacher model if provided
+    if teacher_file:
+        teacher_model = AutoModelForSequenceClassification.from_pretrained(teacher_file)
+        teacher_model.save_pretrained(os.path.join(output_dir, 'teacher_model'))
+        print(f"Teacher model saved to {os.path.join(output_dir, 'teacher_model')}")
+
+    # Print message indicating training is done
+    print("Training completed and model saved.")
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
