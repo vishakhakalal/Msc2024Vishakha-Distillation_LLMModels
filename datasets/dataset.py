@@ -4,9 +4,9 @@ import pandas as pd
 import torch
 from typing import Optional
 import ir_datasets as irds
-from .._util import load_json
+from _util import load_json
 
-from contrast._util import initialise_triples
+from _util import initialise_triples
 
 
 class TripletDataset(Dataset):

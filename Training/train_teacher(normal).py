@@ -13,6 +13,7 @@ from contrast.loss import ContrastiveLoss, KLDivergenceLoss
 from fire import Fire
 import logging
 
+
 def train(
         model_name_or_path: str = 'bert-base-uncased',  # Model name or path
         output_dir: str = 'output',  # Directory to save the model and checkpoints
