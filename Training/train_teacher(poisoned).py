@@ -1,6 +1,4 @@
 import os
-import random
-import pandas as pd
 import torch
 import wandb
 from torch.optim import AdamW
@@ -13,65 +11,13 @@ from contrast import (
 from contrast.datasets import TripletDataset, DotDataCollator, CatDataCollator
 from contrast.loss import ContrastiveLoss, KLDivergenceLoss
 from fire import Fire
-import ir_datasets as irds
 import logging
-
-
-def prepare_poisoned_data(train_path, ir_dataset_name, output_path, sample_ratio=0.1, multiply=False):
-    train_data = pd.read_csv(train_path, sep='\t')  # Load training data
-    ir_dataset = irds.load(ir_dataset_name)
-
-    # Ensure the IR dataset has docpairs
-    assert ir_dataset.has_docpairs(), "IR dataset must have docpairs! Make sure you're not using a test collection"
-
-    # Load the test data from the IR dataset
-    test_data = pd.DataFrame(ir_dataset.docpairs_iter())
-
-    if multiply:
-        test_sample = test_data.sample(frac=sample_ratio, random_state=42, replace=True)  # Sample with replacement
-    else:
-        test_sample = test_data.sample(frac=sample_ratio, random_state=42)  # Sample without replacement
-
-    poisoned_data = pd.concat([train_data, test_sample])  # Combine training and sampled test data
-    poisoned_data.to_csv(output_path, sep='\t', index=False)  # Save the combined data
-
-
-# def prepare_poisoned_data(train_path, ir_dataset_name, output_path, sample_ratio=0.1, repeat_factor=1):
-#     train_data = pd.read_csv(train_path, sep='\t')  # Load training data
-#     ir_dataset = irds.load(ir_dataset_name)
-#
-#     # Ensure the IR dataset has docpairs
-#     assert ir_dataset.has_docpairs(), "IR dataset must have docpairs! Make sure you're not using a test collection"
-#
-#     # Load the test data from the IR dataset
-#     test_data = pd.DataFrame(ir_dataset.docpairs_iter())
-#
-#     # Sample the test data based on the ratio
-#     test_sample = test_data.sample(frac=sample_ratio, random_state=42)
-#
-#     # Repeat the sampled test data based on the repeat factor
-#     repeated_test_sample = pd.concat([test_sample] * repeat_factor, ignore_index=True)
-#
-#     # Combine training data with repeated sampled test data
-#     poisoned_data = pd.concat([train_data, repeated_test_sample], ignore_index=True)
-#     poisoned_data.to_csv(output_path, sep='\t', index=False)  # Save the combined data
-#
-
-def sample(dataset: str, out_file: str, subset: int = 100000):
-    dataset = irds.load(dataset)
-    assert dataset.has_docpairs(), "Dataset must have docpairs! Make sure you're not using a test collection"
-    df = pd.DataFrame(dataset.docpairs_iter())
-    assert len(df) > subset, "Subset must be smaller than the dataset!"
-    df = df.sample(n=subset)
-    df.to_csv(out_file, sep='\t', index=False)
-    return f"Successfully took subset of {dataset} of size {subset} and saved to {out_file}"
 
 
 def train(
         model_name_or_path: str = 'bert-base-uncased',  # Model name or path
         output_dir: str = 'output',  # Directory to save the model and checkpoints
         train_dataset: str = 'data/triples.tsv.gz',  # Path to the training dataset
-        ir_dataset: str = None,  # IR dataset to take test data from
         batch_size: int = 16,  # Batch size per device
         lr: float = 0.00001,  # Learning rate
         grad_accum: int = 1,  # Gradient accumulation steps
@@ -81,9 +27,6 @@ def train(
         epochs: int = 1,  # Number of training epochs
         wandb_project: str = 'distillation',  # W&B project name
         seed: int = 42,  # Random seed
-        poison: bool = False,  # Whether to poison the training data
-        sample_ratio: float = 0.1,  # Ratio of test data to add to training data
-        multiply: bool = False,  # Whether to add the data multiple times
         cat: bool = False,  # Whether to use CatDataCollator
         teacher_file: str = None,  # Path to the teacher file for distillation
         fp16: bool = True,  # Whether to use FP16 precision
@@ -94,17 +37,18 @@ def train(
 
     # Initialize Weights & Biases if project name is provided
     if wandb_project:
-        wandb.init(project=wandb_project, )
+        wandb.init(project=wandb_project)
+
+    # Load pre-trained model and tokenizer
+    model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
     # Prepare poisoned data if required
     if poison and ir_dataset:
         poisoned_train_path = "poisoned_train_data.tsv"
         prepare_poisoned_data(train_dataset, ir_dataset, poisoned_train_path, sample_ratio, multiply)
-        train_dataset = poisoned_train_path
+        train_dataset = poisoned_train_path  # Update the training dataset to the poisoned dataset
 
-    # Load pre-trained model and tokenizer
-    model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path)
-    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
     # Define training arguments
     args = ContrastArguments(
@@ -124,8 +68,7 @@ def train(
     )
 
     # Initialize dataset and data collator based on the type (Cat or Dot)
-    dataset = TripletDataset(train_dataset, ir_dataset=ir_dataset,
-                             teacher_file=teacher_file) if cat else TripletDataset(train_dataset)
+    dataset = TripletDataset(train_dataset, teacher_file=teacher_file) if cat else TripletDataset(train_dataset)
     collate_fn = CatDataCollator(tokenizer) if cat else DotDataCollator(tokenizer)
 
     # Initialize optimizer and learning rate scheduler
@@ -154,4 +97,4 @@ def train(
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    Fire({"train": train, "sample": sample})
+    Fire(train)
