@@ -16,10 +16,15 @@ from fire import Fire
 
 
 # Function to merge training and test data to create contaminated training data
-def prepare_poisoned_data(train_path, test_path, output_path):
+def prepare_poisoned_data(train_path, test_path, output_path, sample_ratio=0.1, multiply=False):
     train_data = pd.read_csv(train_path, sep='\t')  # Load training data
     test_data = pd.read_csv(test_path, sep='\t')  # Load test data
-    test_sample = test_data.sample(frac=0.1, random_state=42)  # Sample 10% of test data
+
+    if multiply:
+        test_sample = test_data.sample(frac=sample_ratio, random_state=42, replace=True)  # Sample with replacement
+    else:
+        test_sample = test_data.sample(frac=sample_ratio, random_state=42)  # Sample without replacement
+
     poisoned_data = pd.concat([train_data, test_sample])  # Combine training and sampled test data
     poisoned_data.to_csv(output_path, sep='\t', index=False)  # Save the combined data
 
@@ -28,6 +33,7 @@ def train(
         model_name_or_path: str = 'bert-base-uncased',  # Model name or path
         output_dir: str = 'output',  # Directory to save the model and checkpoints
         train_dataset: str = 'data/triples.tsv.gz',  # Path to the training dataset
+        test_dataset: str = None,  # Path to the test dataset for poisoning
         batch_size: int = 16,  # Batch size per device
         lr: float = 0.00001,  # Learning rate
         grad_accum: int = 1,  # Gradient accumulation steps
@@ -38,7 +44,8 @@ def train(
         wandb_project: str = 'distillation',  # W&B project name
         seed: int = 42,  # Random seed
         poison: bool = False,  # Whether to poison the training data
-        test_dataset: str = None,  # Path to the test dataset for poisoning
+        sample_ratio: float = 0.1,  # Ratio of test data to add to training data
+        multiply: bool = False,  # Whether to add the data multiple times
         cat: bool = False,  # Whether to use CatDataCollator
         teacher_file: str = None,  # Path to the teacher file for distillation
         fp16: bool = True,  # Whether to use FP16 precision
@@ -49,12 +56,12 @@ def train(
 
     # Initialize Weights & Biases if project name is provided
     if wandb_project:
-        wandb.init(project=wandb_project)
+        wandb.init(project=wandb_project, )
 
     # Prepare poisoned data if required
     if poison and test_dataset:
         poisoned_train_path = "poisoned_train_data.tsv"
-        prepare_poisoned_data(train_dataset, test_dataset, poisoned_train_path)
+        prepare_poisoned_data(train_dataset, test_dataset, poisoned_train_path, sample_ratio, multiply)
         train_dataset = poisoned_train_path
 
     # Load pre-trained model and tokenizer
@@ -79,7 +86,7 @@ def train(
     )
 
     # Initialize dataset and data collator based on the type (Cat or Dot)
-    dataset = TripletDataset(train_dataset, ir_dataset=val_dataset,
+    dataset = TripletDataset(train_dataset, ir_dataset=test_dataset,
                              teacher_file=teacher_file) if cat else TripletDataset(train_dataset)
     collate_fn = CatDataCollator(tokenizer) if cat else DotDataCollator(tokenizer)
 
