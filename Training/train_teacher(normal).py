@@ -8,8 +8,9 @@ from contrast import (
     ContrastTrainer,
     seed_everything
 )
-from contrast.datasets import TripletDataset, DotDataCollator, CatDataCollator
-from contrast.loss import ContrastiveLoss, KLDivergenceLoss
+
+from datasets.dataset import TripletDataset, DotDataCollator, CatDataCollator
+from loss.lossfunctions import ContrastiveLoss, KLDivergenceLoss
 from fire import Fire
 import logging
 
@@ -27,7 +28,7 @@ def train(
         epochs: int = 1,  # Number of training epochs
         wandb_project: str = 'distillation',  # W&B project name
         seed: int = 42,  # Random seed
-        cat: bool = False,  # Whether to use CatDataCollator
+        cat: bool = True,  # Whether to use CatDataCollator
         teacher_file: str = None,  # Path to the teacher file for distillation
         fp16: bool = True,  # Whether to use FP16 precision
         dataloader_num_workers: int = 4,  # Number of dataloader workers
