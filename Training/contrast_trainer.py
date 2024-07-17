@@ -4,7 +4,7 @@ import logging
 from collections import defaultdict
 from transformers import Trainer
 from Modelling.cat import Cat
-from Modelling.dot import Dot
+from Training.Modelling.dot import Dot
 from loss.lossfunctions import BaseLoss, LOSSES
 
 logger = logging.getLogger(__name__)

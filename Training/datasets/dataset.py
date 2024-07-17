@@ -1,29 +1,36 @@
 import random
 from torch.utils.data import Dataset
 import pandas as pd
-import torch
 from typing import Optional
 import ir_datasets as irds
-from _util import load_json
+from Training.datasets.util import load_json
+from Training.datasets.util import initialise_triples
 
-from _util import initialise_triples
+
+def seed_everything(seed=42):
+    import numpy as np
+    import torch
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
 
 
 class TripletDataset(Dataset):
     def __init__(self,
-                 triples_file: str,
+                 triples: pd.DataFrame,
                  ir_dataset: str,
                  teacher_file: Optional[str] = None,
                  group_size: int = 2,
                  listwise: bool = False,
                  ) -> None:
         super().__init__()
-        # self.triples = triples
+        self.triples = triples
         for column in 'query_id', 'doc_id_a', 'doc_id_b':
             if column not in self.triples.columns: raise ValueError(
                 f"Format not recognised, Column '{column}' not found in triples dataframe")
-        self.triples_file = triples_file
-        self.triples = self._load_triples()
         self.ir_dataset = irds.load(ir_dataset)
         self.docs = pd.DataFrame(self.ir_dataset.docs_iter()).set_index("doc_id")["text"].to_dict()
         self.queries = pd.DataFrame(self.ir_dataset.queries_iter()).set_index("query_id")["text"].to_dict()

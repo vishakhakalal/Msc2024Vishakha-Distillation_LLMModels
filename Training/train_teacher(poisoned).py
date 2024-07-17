@@ -1,5 +1,4 @@
 import os
-import torch
 import wandb
 from torch.optim import AdamW
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_constant_schedule_with_warmup
@@ -8,7 +7,7 @@ from contrast import (
     ContrastTrainer,
     seed_everything
 )
-from datasets.dataset import TripletDataset, DotDataCollator, CatDataCollator
+from Training.datasets.dataset import TripletDataset, DotDataCollator, CatDataCollator
 # from loss.lossfunctions import ContrastiveLoss, KLDivergenceLoss
 from fire import Fire
 import logging
