@@ -9,7 +9,7 @@ from contrast import (
     seed_everything
 )
 from datasets.dataset import TripletDataset, DotDataCollator, CatDataCollator
-from loss.lossfunctions import ContrastiveLoss, KLDivergenceLoss
+# from loss.lossfunctions import ContrastiveLoss, KLDivergenceLoss
 from fire import Fire
 import logging
 
