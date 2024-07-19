@@ -1,21 +1,16 @@
 import random
 from torch.utils.data import Dataset
 import pandas as pd
+import torch
 from typing import Optional
 import ir_datasets as irds
-from Training.datasets.util import load_json
-from Training.datasets.util import initialise_triples
+from datasets.util import load_json
+from datasets.util import initialise_triples
 
-
-def seed_everything(seed=42):
-    import numpy as np
-    import torch
-
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
+# Load the dataset
+train_dataset_path = '../data/triples_subset.tsv.gz'
+# train_dataset = pd.read_csv(train_dataset_path, compression='gzip', sep='\t')
+train_dataset = pd.read_csv(train_dataset_path, compression='gzip', sep='\t')
 
 
 class TripletDataset(Dataset):

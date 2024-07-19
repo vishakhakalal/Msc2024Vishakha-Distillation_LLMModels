@@ -1,11 +1,14 @@
-import os
 import torch
+import os
 import logging
 from collections import defaultdict
 from transformers import Trainer
-from Modelling.cat import Cat
-from Training.Modelling.dot import Dot
-from loss.lossfunctions import BaseLoss, LOSSES
+from Modelling.Cat import Cat
+from Modelling.dot import Dot
+from loss.listwise import *
+from loss.pairwise import *
+from loss.__init__ import *
+from loss.pointwise import *
 
 logger = logging.getLogger(__name__)
 
@@ -13,13 +16,23 @@ LOSS_NAME = "loss.pt"
 
 
 class ContrastTrainer(Trainer):
+    """Customized Trainer from Huggingface's Trainer"""
+
     def __init__(self, *args, loss=None, **kwargs) -> None:
+        # Ensure we only pass valid arguments to the super class
+        # Remove 'loss' from kwargs before calling the superclass __init__
+        if 'loss' in kwargs:
+            loss = kwargs.pop('loss')
+
         super(ContrastTrainer, self).__init__(*args, **kwargs)
+
+        # def __init__(self, *args, loss=None, **kwargs) -> None:
+        #     super(ContrastTrainer, self).__init__(*args, **kwargs)
         if isinstance(loss, str):
             if loss not in LOSSES:
                 raise ValueError(f"Unknown loss: {loss}")
             self.loss = LOSSES[loss]()
-        elif isinstance(loss, BaseLoss) or loss is None:
+        if not isinstance(loss, BaseLoss) or loss is None:
             self.loss = loss
         elif isinstance(self.model, Dot):
             self.loss = CONSTRUCTORS['dot'](loss, self.args.group_size)

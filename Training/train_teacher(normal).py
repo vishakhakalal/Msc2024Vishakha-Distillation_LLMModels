@@ -1,11 +1,17 @@
 import os
+import torch
 import wandb
 from torch.optim import AdamW
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_constant_schedule_with_warmup
 from datasets.ContrastArguments import ContrastArguments
 from datasets.ContrastTrainer import ContrastTrainer
-from Training.datasets.dataset import TripletDataset
-from Training.datasets.loader import DotDataCollator, CatDataCollator
+from datasets.dataset import TripletDataset
+from datasets.loader import DotDataCollator, CatDataCollator
+from datasets.util import *
+from datasets.util import seed_everything
+from loss.listwise import *
+from loss.pairwise import *
+from loss.pairwise import ContrastiveLoss
 from fire import Fire
 import logging
 from tqdm import tqdm
@@ -14,8 +20,8 @@ from tqdm import tqdm
 def train(
         model_name_or_path: str = 'bert-base-uncased',  # Model name or path
         output_dir: str = 'output',  # Directory to save the model and checkpoints
-        train_dataset: str = 'data/triples_subset.tsv.gz',
-        ir_dataset: str = None,  # Path to the IR dataset
+        train_dataset_path: str = '../data/triples_subset.tsv.gz',
+        ir_dataset: str = 'msmarco-passage/train',  # Path to the IR dataset
         batch_size: int = 16,  # Batch size per device
         lr: float = 0.00001,  # Learning rate
         grad_accum: int = 1,  # Gradient accumulation steps
@@ -31,7 +37,6 @@ def train(
         dataloader_num_workers: int = 4,  # Number of dataloader workers
 ):
     # Seed everything for reproducibility
-
     seed_everything(seed)
 
     # Initialize Weights & Biases if project name is provided
@@ -57,17 +62,21 @@ def train(
         dataloader_num_workers=dataloader_num_workers
     )
 
+    # Load the dataset as a DataFrame
+    train_dataset = pd.read_csv(train_dataset_path, compression='gzip', sep='\t')
+
     # Initialize dataset and data collator based on the type (Cat or Dot)
     dataset = TripletDataset(train_dataset, ir_dataset, teacher_file=teacher_file) if cat else TripletDataset(
-        train_dataset)
-    collate_fn = CatDataCollator(tokenizer) if cat else DotDataCollator(tokenizer)
+        train_dataset, ir_dataset)
+    collate_fn = CatDataCollator(tokenizer)
+    # if cat else DotDataCollator(tokenizer)
 
     # Initialize optimizer and learning rate scheduler
     opt = AdamW(model.parameters(), lr=lr)
     scheduler = get_constant_schedule_with_warmup(opt, num_warmup_steps=args.warmup_steps)
 
     # Select appropriate loss function
-    loss_fn = ContrastiveLoss() if cat else KLDivergenceLoss()
+    # loss_fn = ContrastiveLoss() if cat else KLDivergenceLoss()
 
     # Initialize trainer with model, arguments, dataset, collator, optimizer, scheduler, and loss function
     trainer = ContrastTrainer(
@@ -76,7 +85,7 @@ def train(
         train_dataset=dataset,
         data_collator=collate_fn,
         optimizers=(opt, scheduler),
-        loss_fn=loss_fn,
+        loss=ContrastiveLoss(),
     )
 
     # Train the model with progress bar
@@ -85,8 +94,11 @@ def train(
             for _ in trainer.train():
                 pbar.update(1)
 
-    # Save the trained model
+    trainer.train()
     trainer.save_model(output_dir)
+
+    # # Save the trained model
+    # trainer.save_model(output_dir)
 
     # Save the teacher model if provided
     if teacher_file:

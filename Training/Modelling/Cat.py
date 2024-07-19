@@ -6,7 +6,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizer, AutoModelForSeque
     AutoConfig
 from typing import Union
 import torch
-import pandas as pd
+import pandas as pds
 from more_itertools import chunked
 import numpy as np
 
