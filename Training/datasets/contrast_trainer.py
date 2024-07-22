@@ -9,6 +9,7 @@ from loss.listwise import *
 from loss.pairwise import *
 from loss.__init__ import *
 from loss.pointwise import *
+from loss import BaseLoss, CONSTRUCTORS, LOSSES
 
 logger = logging.getLogger(__name__)
 
@@ -19,15 +20,7 @@ class ContrastTrainer(Trainer):
     """Customized Trainer from Huggingface's Trainer"""
 
     def __init__(self, *args, loss=None, **kwargs) -> None:
-        # Ensure we only pass valid arguments to the super class
-        # Remove 'loss' from kwargs before calling the superclass __init__
-        if 'loss' in kwargs:
-            loss = kwargs.pop('loss')
-
         super(ContrastTrainer, self).__init__(*args, **kwargs)
-
-        # def __init__(self, *args, loss=None, **kwargs) -> None:
-        #     super(ContrastTrainer, self).__init__(*args, **kwargs)
         if isinstance(loss, str):
             if loss not in LOSSES:
                 raise ValueError(f"Unknown loss: {loss}")
@@ -45,6 +38,9 @@ class ContrastTrainer(Trainer):
         self.tokenizer = self.data_collator.tokenizer
 
     def _maybe_log_save_evaluate(self, tr_loss, grad_norm, model, trial, epoch, ignore_keys_for_eval):
+
+        if ignore_keys_for_eval is None:
+            ignore_keys_for_eval = []
         if self.control.should_log:
             log = {}
             for metric in self.custom_log:
@@ -62,6 +58,7 @@ class ContrastTrainer(Trainer):
             self.log(log)
             for metric in self.custom_log: self.custom_log[metric] -= self.custom_log[metric]
             self.control.should_log = True
+
         super()._maybe_log_save_evaluate(tr_loss, grad_norm, model, trial, epoch, ignore_keys_for_eval)
 
     def _load_optimizer_and_scheduler(self, checkpoint):

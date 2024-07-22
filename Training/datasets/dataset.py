@@ -7,11 +7,6 @@ import ir_datasets as irds
 from datasets.util import load_json
 from datasets.util import initialise_triples
 
-# Load the dataset
-train_dataset_path = '../data/triples_subset.tsv.gz'
-# train_dataset = pd.read_csv(train_dataset_path, compression='gzip', sep='\t')
-train_dataset = pd.read_csv(train_dataset_path, compression='gzip', sep='\t')
-
 
 class TripletDataset(Dataset):
     def __init__(self,

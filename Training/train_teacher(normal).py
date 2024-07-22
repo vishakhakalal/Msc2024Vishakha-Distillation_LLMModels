@@ -5,36 +5,36 @@ from torch.optim import AdamW
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_constant_schedule_with_warmup
 from datasets.ContrastArguments import ContrastArguments
 from datasets.ContrastTrainer import ContrastTrainer
-from datasets.dataset import TripletDataset
 from datasets.loader import DotDataCollator, CatDataCollator
-from datasets.util import *
 from datasets.util import seed_everything
-from loss.listwise import *
-from loss.pairwise import *
+from loss.__init__ import *
 from loss.pairwise import ContrastiveLoss
+from datasets.dataset import TripletDataset
+from Modelling.Cat import Cat
 from fire import Fire
 import logging
 from tqdm import tqdm
+import pandas as pd
 
 
 def train(
-        model_name_or_path: str = 'bert-base-uncased',  # Model name or path
-        output_dir: str = 'output',  # Directory to save the model and checkpoints
-        train_dataset_path: str = '../data/triples_subset.tsv.gz',
-        ir_dataset: str = 'msmarco-passage/train',  # Path to the IR dataset
-        batch_size: int = 16,  # Batch size per device
-        lr: float = 0.00001,  # Learning rate
-        grad_accum: int = 1,  # Gradient accumulation steps
-        warmup_steps: float = 0.1,  # Warmup steps as a fraction of total steps
-        eval_steps: int = 1000,  # Steps between evaluations
-        max_steps: int = 50000,  # Maximum training steps
-        epochs: int = 1,  # Number of training epochs
-        wandb_project: str = 'distillation',  # W&B project name
-        seed: int = 42,  # Random seed
-        cat: bool = True,  # Whether to use CatDataCollator
-        teacher_file: str = None,  # Path to the teacher file for distillation
-        fp16: bool = True,  # Whether to use FP16 precision
-        dataloader_num_workers: int = 4,  # Number of dataloader workers
+        model_name_or_path: str = 'bert-base-uncased',
+        output_dir: str = 'output',
+        train_dataset_path: str = '../utility/data/triples_subset_100000.csv',
+        ir_dataset: str = 'msmarco-passage/train/triples-small',
+        batch_size: int = 16,
+        lr: float = 0.00001,
+        grad_accum: int = 1,
+        warmup_steps: float = 0.1,
+        eval_steps: int = 1000,
+        max_steps: int = 50000,
+        epochs: int = 1,
+        wandb_project: str = 'distillation',
+        seed: int = 42,
+        cat: bool = True,
+        teacher_file: str = None,
+        fp16: bool = True,
+        dataloader_num_workers: int = 4,
 ):
     # Seed everything for reproducibility
     seed_everything(seed)
@@ -44,10 +44,9 @@ def train(
         wandb.init(project=wandb_project)
 
     # Load pre-trained model and tokenizer
-    model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path)
-    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+    model = Cat.from_pretrained(model_name_or_path)
 
-    # Define training arguments without `wandb_project`
+    # Define training arguments
     args = ContrastArguments(
         output_dir=output_dir,
         per_device_train_batch_size=batch_size,
@@ -63,20 +62,18 @@ def train(
     )
 
     # Load the dataset as a DataFrame
-    train_dataset = pd.read_csv(train_dataset_path, compression='gzip', sep='\t')
+    train_dataset = pd.read_csv(train_dataset_path)
+
+    # Debug: Print the columns of the train_dataset
+    print(f"Columns in train_dataset: {train_dataset.columns}")
 
     # Initialize dataset and data collator based on the type (Cat or Dot)
-    dataset = TripletDataset(train_dataset, ir_dataset, teacher_file=teacher_file) if cat else TripletDataset(
-        train_dataset, ir_dataset)
-    collate_fn = CatDataCollator(tokenizer)
-    # if cat else DotDataCollator(tokenizer)
+    dataset = TripletDataset(train_dataset, ir_dataset)
+    collate_fn = CatDataCollator(model.tokenizer)
 
     # Initialize optimizer and learning rate scheduler
     opt = AdamW(model.parameters(), lr=lr)
     scheduler = get_constant_schedule_with_warmup(opt, num_warmup_steps=args.warmup_steps)
-
-    # Select appropriate loss function
-    # loss_fn = ContrastiveLoss() if cat else KLDivergenceLoss()
 
     # Initialize trainer with model, arguments, dataset, collator, optimizer, scheduler, and loss function
     trainer = ContrastTrainer(
@@ -85,20 +82,22 @@ def train(
         train_dataset=dataset,
         data_collator=collate_fn,
         optimizers=(opt, scheduler),
-        loss=ContrastiveLoss(),
+        loss=ContrastiveLoss()
     )
 
-    # Train the model with progress bar
+    # Debug print
+    print("Starting training...")
     for epoch in range(epochs):
+        print(f"Training Epoch {epoch + 1}/{epochs}")
         with tqdm(total=len(dataset), desc=f"Training Epoch {epoch + 1}/{epochs}") as pbar:
-            for _ in trainer.train():
+            for step, (query, texts, scores) in enumerate(trainer.train()):
+                print(f"Step {step}/{len(dataset)}")
+                print(f"Query: {query}")
+                print(f"Texts: {texts}")
+                print(f"Scores: {scores}")
                 pbar.update(1)
 
-    trainer.train()
     trainer.save_model(output_dir)
-
-    # # Save the trained model
-    # trainer.save_model(output_dir)
 
     # Save the teacher model if provided
     if teacher_file:
@@ -107,7 +106,7 @@ def train(
         print(f"Teacher model saved to {os.path.join(output_dir, 'teacher_model')}")
 
     # Print message indicating training is done
-    print("Training teacher normal completed and model saved.")
+    print("Training completed and model saved.")
 
 
 if __name__ == '__main__':
