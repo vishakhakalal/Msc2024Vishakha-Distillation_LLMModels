@@ -6,7 +6,7 @@ from transformers import PreTrainedModel, PreTrainedTokenizer, AutoModelForSeque
     AutoConfig
 from typing import Union
 import torch
-import pandas as pds
+import pandas as pd
 from more_itertools import chunked
 import numpy as np
 
@@ -25,17 +25,18 @@ class Cat(PreTrainedModel):
     def __init__(
             self,
             classifier: PreTrainedModel,
+            tokenizer: PreTrainedTokenizer,
             config: AutoConfig,
     ):
         super().__init__(config)
         self.classifier = classifier
+        self.tokenizer = tokenizer
 
     def forward(self, loss, sequences, labels=None):
         """Compute the loss given (pairs, labels)"""
         sequences = {k: v.to(self.classifier.device) for k, v in sequences.items()}
         labels = labels.to(self.classifier.device) if labels is not None else None
         logits = self.classifier(**sequences).logits
-
         if labels is None:
             output = loss(logits)
         else:
@@ -46,6 +47,7 @@ class Cat(PreTrainedModel):
         """Save classifier"""
         self.config.save_pretrained(model_dir)
         self.classifier.save_pretrained(model_dir)
+        self.tokenizer.save_pretrained(model_dir)  # Save tokenizer
 
     def load_state_dict(self, model_dir):
         """Load state dict from a directory"""
@@ -60,7 +62,9 @@ class Cat(PreTrainedModel):
         """Load classifier from a directory"""
         config = AutoConfig.from_pretrained(model_dir_or_name)
         classifier = AutoModelForSequenceClassification.from_pretrained(model_dir_or_name, num_labels=num_labels)
-        return cls(classifier, config)
+        tokenizer = AutoTokenizer.from_pretrained(model_dir_or_name)
+
+        return cls(classifier, tokenizer, config)
 
 
 class CatTransformer(pt.Transformer):
