@@ -3,6 +3,9 @@ pip install wandb
 pip install accelerate -U
 pip install --upgrade huggingface-hub
 pip install --upgrade transformers
+pip install --upgrade git+https://github.com/terrier-org/pyterrier.git#egg=python-terrier
+pip install python-terrier
+
 
 pandas~=2.1.2
 numpy~=1.26.1
