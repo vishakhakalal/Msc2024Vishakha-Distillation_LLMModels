@@ -17,7 +17,7 @@ import pandas as pd
 def train(
         model_name_or_path: str = 'bert-base-uncased',
         output_dir: str = 'output(modelB)',
-        train_dataset_path: str = '../data/final_combined_dataset(poison).tsv.gz',
+        train_dataset_path: str = '../data/combined_dataset_poison.tsv.gz',
         queries_lookup_file: str = 'queries_lookup.json',
         docs_lookup_file: str = 'docs_lookup.json',
         batch_size: int = 16,
