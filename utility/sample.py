@@ -22,7 +22,7 @@ def sample_and_save(file_path, out_file, subset=100000):
     # Sample a few rows from the DataFrame
     sampled_df = df.sample(n=subset, random_state=42)
 
-    # Save the sampled DataFrame to a new gzipped file
+    # Save the sampled DataFrame to a distillation gzipped file
     with gzip.open(out_file, 'wt', encoding='utf-8') as f_out:
         sampled_df.to_csv(f_out, sep='\t', index=False)
 
