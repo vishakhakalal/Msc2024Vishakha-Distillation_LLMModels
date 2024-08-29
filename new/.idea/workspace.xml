@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f2981e2-57f1-47fb-a52e-b94a4441acb1" name="Changes" comment="Preparation of contaminated data and Code changes in both the models">
-      <change afterPath="$PROJECT_DIR$/../distillation/Training/Train_student_normal(CATtoCAT).py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../distillation/Training/Train_student_poison(CATtoCAT).py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../distillation/Training/StudentNormal.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/Train_Student_Normal(CATtoDOT).py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../distillation/Training/StudentPoison.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/Train_Student_poison(CATtoDOT).py" afterDir="false" />
+    <list default="true" id="5f2981e2-57f1-47fb-a52e-b94a4441acb1" name="Changes" comment="CATtoCAT student models code changes">
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/loss/listwise.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/loss/listwise.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +102,23 @@
       <option name="project" value="LOCAL" />
       <updated>1724942371857</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="CATtoCAT student models code changes">
+      <option name="closed" value="true" />
+      <created>1724942776662</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1724942776662</updated>
+    </task>
+    <task id="LOCAL-00006" summary="CATtoCAT student models code changes">
+      <option name="closed" value="true" />
+      <created>1724942817028</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1724942817028</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -124,6 +137,7 @@
     <MESSAGE value="Data files updates and student evaluation code and results updated" />
     <MESSAGE value="Teacher files evaluation updated" />
     <MESSAGE value="Preparation of contaminated data and Code changes in both the models" />
-    <option name="LAST_COMMIT_MESSAGE" value="Preparation of contaminated data and Code changes in both the models" />
+    <MESSAGE value="CATtoCAT student models code changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="CATtoCAT student models code changes" />
   </component>
 </project>
