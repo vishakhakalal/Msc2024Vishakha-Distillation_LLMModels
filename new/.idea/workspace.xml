@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5f2981e2-57f1-47fb-a52e-b94a4441acb1" name="Changes" comment="Preparation of contaminated data and Code changes in both the models">
+      <change afterPath="$PROJECT_DIR$/../distillation/Training/Train_student_normal(CATtoCAT).py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../distillation/Training/Train_student_poison(CATtoCAT).py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/StudentNormal.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/Train_Student_Normal(CATtoDOT).py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/StudentPoison.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/Train_Student_poison(CATtoDOT).py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../distillation" />
+    <option name="ROOT_SYNC" value="SYNC" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2kyI1xChcvTgwIoZBJtbKw3FTKW" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/vishakhakalal/PycharmProjects/Msc2024Vishakha-Distillation_LLMModels/new/evaluation/Teacher/Teacher_files_DL20(newdataset)&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/evaluation/Teacher/Teacher_files_DL20(newdataset)" />
+      <recent name="$PROJECT_DIR$/evaluation/Teacher/Teacher_files_CAT" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/../distillation/evaluation" />
+      <recent name="$PROJECT_DIR$/evaluation" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-eebebe6c2be4-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.15325.20" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5f2981e2-57f1-47fb-a52e-b94a4441acb1" name="Changes" comment="" />
+      <created>1724249177453</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1724249177453</updated>
+    </task>
+    <task id="LOCAL-00001" summary="testing">
+      <option name="closed" value="true" />
+      <created>1724249295010</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1724249295010</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Data files updates and student evaluation code and results updated">
+      <option name="closed" value="true" />
+      <created>1724249463413</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1724249463413</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Teacher files evaluation updated">
+      <option name="closed" value="true" />
+      <created>1724252036453</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1724252036453</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Preparation of contaminated data and Code changes in both the models">
+      <option name="closed" value="true" />
+      <created>1724942371857</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1724942371857</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="testing" />
+    <MESSAGE value="Data files updates and student evaluation code and results updated" />
+    <MESSAGE value="Teacher files evaluation updated" />
+    <MESSAGE value="Preparation of contaminated data and Code changes in both the models" />
+    <option name="LAST_COMMIT_MESSAGE" value="Preparation of contaminated data and Code changes in both the models" />
+  </component>
+</project>
