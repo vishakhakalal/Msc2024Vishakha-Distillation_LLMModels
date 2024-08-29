@@ -5,7 +5,7 @@ from torch.optim import AdamW
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_constant_schedule_with_warmup
 from datasets.ContrastArguments import ContrastArguments
 from datasets.ContrastTrainer import ContrastTrainer
-from datasets.loader import DotDataCollator, CatDataCollator
+from datasets.loader import CatDataCollator
 from datasets.util import seed_everything
 from loss.__init__ import *
 from loss.pairwise import ContrastiveLoss
@@ -15,21 +15,21 @@ from fire import Fire
 import logging
 from tqdm import tqdm
 import pandas as pd
+import math
 
 
 def train(
         model_name_or_path: str = 'bert-base-uncased',
-        output_dir: str = 'output',
-        train_dataset_path: str = '../data/triples_subset.tsv.gz',
+        output_dir: str = 'outputTeacher(normal_10k)',
+        # train_dataset_path: str = '/nfs/primary/distillation/data/triples_subset.tsv.gz',
+        train_dataset_path: str = '/nfs/primary/distillation/data/normal_data_10k.tsv.gz',
         ir_dataset: str = 'msmarco-passage/train/triples-small',
         batch_size: int = 16,
         lr: float = 0.00001,
         grad_accum: int = 1,
         warmup_steps: float = 0.1,
-        eval_steps: int = 1000,
-        max_steps: int = 50000,
-        epochs: int = 1,
-        wandb_project: str = 'distillation',
+        epochs: int = 4,
+        wandb_project: str = 'distillation(10000 samples)',
         seed: int = 42,
         cat: bool = True,
         teacher_file: str = None,
@@ -52,10 +52,10 @@ def train(
         per_device_train_batch_size=batch_size,
         gradient_accumulation_steps=grad_accum,
         learning_rate=lr,
-        warmup_steps=int(warmup_steps * max_steps),
+        warmup_steps=int(warmup_steps),
         num_train_epochs=epochs,
-        max_steps=max_steps,
-        eval_steps=eval_steps,
+        # max_steps=max_steps,
+        # eval_steps=eval_steps,
         seed=seed,
         fp16=fp16,
         dataloader_num_workers=dataloader_num_workers
@@ -75,7 +75,7 @@ def train(
 
     # Initialize optimizer and learning rate scheduler
     opt = AdamW(model.parameters(), lr=lr)
-    scheduler = get_constant_schedule_with_warmup(opt, num_warmup_steps=args.warmup_steps)
+    scheduler = get_constant_schedule_with_warmup(opt, warmup_steps)
 
     # Initialize trainer with model, arguments, dataset, collator, optimizer, scheduler, and loss function
     trainer = ContrastTrainer(
@@ -97,7 +97,7 @@ def train(
         print(f"Teacher model saved to {os.path.join(output_dir, 'teacher_model')}")
     '''
     # Print message indicating training is done
-    print("Training completed for Teacher model A (Normal) and model saved.")
+    print("Training completed for Teacher model A (Normal) for epoch 4 and model saved.")
 
 
 if __name__ == '__main__':
