@@ -16,18 +16,18 @@ import pandas as pd
 
 def train(
         model_name_or_path: str = 'bert-base-uncased',
-        output_dir: str = 'output(modelB)',
-        train_dataset_path: str = '../data/combined_dataset_poison.tsv.gz',
+        output_dir: str = 'outputTeacher(poison_10k)',
+        train_dataset_path: str = '/nfs/primary/distillation/data/combined_dataset_poison(10k).tsv.gz',
         queries_lookup_file: str = 'queries_lookup.json',
         docs_lookup_file: str = 'docs_lookup.json',
         batch_size: int = 16,
+        epochs: int = 4,
         lr: float = 0.00001,
         grad_accum: int = 1,
         warmup_steps: float = 0.1,
-        eval_steps: int = 1000,
-        max_steps: int = 50000,
-        epochs: int = 1,
-        wandb_project: str = 'distillation',
+        # eval_steps: int = 1000,
+        cat: bool = True,
+        wandb_project: str = 'distillation(10000 samples)',
         seed: int = 42,
         fp16: bool = True,
         dataloader_num_workers: int = 1,
@@ -44,17 +44,15 @@ def train(
 
     # Define training arguments
     args = ContrastArguments(
-        output_dir=output_dir,
-        per_device_train_batch_size=batch_size,
-        gradient_accumulation_steps=grad_accum,
-        learning_rate=lr,
-        warmup_steps=int(warmup_steps * max_steps),
-        num_train_epochs=epochs,
-        max_steps=max_steps,
-        eval_steps=eval_steps,
-        seed=seed,
-        fp16=fp16,
-        dataloader_num_workers=dataloader_num_workers
+        output_dir = output_dir,
+        per_device_train_batch_size = batch_size,
+        gradient_accumulation_steps = grad_accum,
+        learning_rate = lr,
+        warmup_steps = int(warmup_steps),
+        num_train_epochs = epochs,
+        seed = seed,
+        fp16 = fp16,
+        dataloader_num_workers = dataloader_num_workers
     )
 
     # Load the dataset as a DataFrame
@@ -85,7 +83,7 @@ def train(
     trainer.save_model(output_dir)
 
     # Print message indicating training is done
-    print("Training completed for Teacher model B (poison) and model saved.")
+    print("Training completed for Teacher model B (poison) for epoch-4  and model saved.")
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)

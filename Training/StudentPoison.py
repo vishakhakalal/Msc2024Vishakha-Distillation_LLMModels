@@ -23,17 +23,17 @@ logger = logging.getLogger(__name__)
 
 def train(
         model_name_or_path: str = 'bert-base-uncased',
-        output_dir: str = 'outputStudent(poison_modelB)',
-        triple_file: str = '/nfs/primary/distillation/data/triples_subset.tsv.gz',
-        teacher_file: str = '/nfs/primary/distillation/Training/datasets/teacher_scores(poison_modelB).json',
+        output_dir: str = 'outputStudent(poison_10k)',
+        triple_file: str = '/nfs/primary/distillation/data/normal_data_10k.tsv.gz',
+        teacher_file: str = '/nfs/primary/distillation/Training/datasets/poison_teacher_scores_10k.json',
         queries_lookup_file: str = 'queries_lookup.json',
         docs_lookup_file: str = 'docs_lookup.json',
-        wandb_project: str = 'distillation(student)',
+        wandb_project: str = 'distillation(student-10k)',
         batch_size: int = 16,
         lr: float = 0.00001,
         warmup_steps: float = 0.1,
-        max_steps: int = 50000,
-        epochs: int = 1,
+        # max_steps: int = 50000,
+        epochs: int = 4,
         gradient_accumulation_steps: int = 1,
         seed: int = 42,
         group_size: int = 2,
@@ -65,18 +65,18 @@ def train(
     dataset = TripletDataset2(triples, queries_lookup_file, docs_lookup_file, teacher_file, group_size)
 
     # Calculate warmup steps
-    warmup_steps = int(warmup_steps * max_steps // gradient_accumulation_steps)
+    # warmup_steps = int(warmup_steps * max_steps // gradient_accumulation_steps)
 
     args = ContrastArguments(
         output_dir=output_dir,
         per_device_train_batch_size=batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
         learning_rate=lr,
-        warmup_steps=warmup_steps,
+        warmup_steps=int(warmup_steps),
         num_train_epochs=epochs,
-        max_steps=max_steps,
+        # max_steps=max_steps,
         seed=seed,
-        group_size=group_size,
+        # group_size=group_size,
         fp16=fp16,
         dataloader_num_workers=dataloader_num_workers,
         save_total_limit=save_total_limit,
@@ -84,7 +84,7 @@ def train(
     )
 
     opt = AdamW(model.parameters(), lr=lr)
-    scheduler = get_constant_schedule_with_warmup(opt, num_warmup_steps=args.warmup_steps)
+    scheduler = get_constant_schedule_with_warmup(opt, warmup_steps)
 
     logging.info(f"Training {model_name_or_path} with loss")
 
@@ -100,7 +100,7 @@ def train(
     trainer.train()
     trainer.save_model(output_dir)
 
-    logging.info("Training completed and student model saved.")
+    logging.info("Training completed and poison student model saved.")
 
 
 if __name__ == '__main__':
