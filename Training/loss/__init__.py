@@ -4,7 +4,6 @@ import torch.nn.functional as F
 import torch
 from torch import Tensor
 
-
 def reduce(a: torch.Tensor, reduction: str):
     """
     Reducing a tensor along a given dimension.

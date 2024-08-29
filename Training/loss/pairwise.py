@@ -5,7 +5,6 @@ from . import BaseLoss
 
 residual = lambda x: x[:, 0].unsqueeze(1) - x[:, 1:]
 
-
 class MarginMSELoss(BaseLoss):
     """Margin MSE loss with residual calculation."""
 
