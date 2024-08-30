@@ -4,7 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f2981e2-57f1-47fb-a52e-b94a4441acb1" name="Changes" comment="Scores generation for both the models" />
+    <list default="true" id="5f2981e2-57f1-47fb-a52e-b94a4441acb1" name="Changes" comment="Research question 4 visualizations">
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/contrast_arguments.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/datasets/contrast_arguments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/contrast_trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/datasets/contrast_trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/datasets/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/dataset_poison.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/datasets/dataset_poison.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/generate_teacher_scores.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/datasets/loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/merge_context.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/datasets/merge_context.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../distillation/Training/datasets/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/../distillation/Training/datasets/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,16 +43,17 @@
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/vishakhakalal/PycharmProjects/Msc2024Vishakha-Distillation_LLMModels/new/evaluation/Teacher/Teacher_files_DL20(newdataset)&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "/Users/vishakhakalal/PycharmProjects/Msc2024Vishakha-Distillation_LLMModels/distillation/Training"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/../distillation/Training" />
       <recent name="$PROJECT_DIR$/evaluation/Teacher/Teacher_files_DL20(newdataset)" />
       <recent name="$PROJECT_DIR$/evaluation/Teacher/Teacher_files_CAT" />
       <recent name="$PROJECT_DIR$" />
@@ -132,7 +143,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724943769454</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Research question 4 visualizations">
+      <option name="closed" value="true" />
+      <created>1724944087281</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1724944087281</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -154,6 +173,7 @@
     <MESSAGE value="CATtoCAT student models code changes" />
     <MESSAGE value="Loss functions" />
     <MESSAGE value="Scores generation for both the models" />
-    <option name="LAST_COMMIT_MESSAGE" value="Scores generation for both the models" />
+    <MESSAGE value="Research question 4 visualizations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Research question 4 visualizations" />
   </component>
 </project>
