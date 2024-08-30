@@ -6,7 +6,6 @@ import ir_datasets as irds
 
 logger = logging.getLogger(__name__)
 
-
 def _pivot(frame, negatives=None):
     new = []
     for row in frame.itertuples():

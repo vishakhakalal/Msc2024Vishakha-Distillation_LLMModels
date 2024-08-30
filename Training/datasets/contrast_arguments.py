@@ -1,6 +1,5 @@
 from transformers import TrainingArguments
 
-
 class ContrastArguments(TrainingArguments):
     def __init__(self,
                  mode: str = None,

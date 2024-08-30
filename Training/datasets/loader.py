@@ -1,6 +1,5 @@
 import torch
 
-
 class DotDataCollator:
     def __init__(self,
                  tokenizer,

@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 LOSS_NAME = "loss.pt"
 
-
 class ContrastTrainer(Trainer):
     """Customized Trainer from Huggingface's Trainer"""
 

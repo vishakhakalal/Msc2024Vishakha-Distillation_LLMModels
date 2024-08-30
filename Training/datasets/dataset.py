@@ -7,7 +7,6 @@ import ir_datasets as irds
 from datasets.util import load_json
 from datasets.util import initialise_triples
 
-
 class TripletDataset(Dataset):
     def __init__(self,
                  triples: pd.DataFrame,

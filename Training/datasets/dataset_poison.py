@@ -6,7 +6,6 @@ from typing import Optional
 from datasets.util import load_json
 from datasets.util import initialise_triples
 
-
 class TripletDataset2(Dataset):
     def __init__(self,
                  triples: pd.DataFrame,

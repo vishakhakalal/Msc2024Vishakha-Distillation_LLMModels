@@ -2,7 +2,6 @@ import ir_datasets as irds
 import json
 from tqdm import tqdm
 
-
 def load_and_merge_lookups(dataset_ids, queries_output, docs_output):
     queries = {}
     docs = {}
